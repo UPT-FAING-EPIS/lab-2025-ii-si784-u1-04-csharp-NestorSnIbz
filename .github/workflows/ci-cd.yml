@@ -31,8 +31,10 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build . --tag ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
-          docker push ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
+          USER_LOWER=$(echo "${GITHUB_ACTOR}" | tr '[:upper:]' '[:lower:]')
+          docker build . --tag ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
+          docker push ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
+
 
   deploy:
     permissions:
