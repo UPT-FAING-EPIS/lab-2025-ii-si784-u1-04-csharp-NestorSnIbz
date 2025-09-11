@@ -1,7 +1,7 @@
 name: Construcción y despliegue de una aplicación MVC a Azure
 
 env:
-  AZURE_WEBAPP_NAME: upt-awa-320  # Aquí va el nombre de tu aplicación
+  AZURE_WEBAPP_NAME: upt-awa-320  # Nombre de tu aplicación en Azure
   DOTNET_VERSION: '8'             # Versión de .NET
 
 on:
@@ -14,7 +14,7 @@ on:
 
 permissions:
   contents: read
-  packages: write
+  packages: write  # necesario para GHCR
 
 jobs:
   build:
@@ -22,17 +22,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: 'Login to GitHub Container Registry'
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: nestorsnibz        # tu usuario en minúsculas
-          password: ${{ secrets.GHTOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Build and Push Docker Image'
+      - name: Build and Push Docker Image
         run: |
-          docker build . --tag ghcr.io/nestorsnibz/shorten:${{ github.sha }}
-          docker push ghcr.io/nestorsnibz/shorten:${{ github.sha }}
+          docker build . --tag ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
+          docker push ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
 
   deploy:
     permissions:
@@ -44,10 +44,10 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Desplegar a Azure Web App
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: ghcr.io/nestorsnibz/shorten:${{ github.sha }}
+          images: ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
