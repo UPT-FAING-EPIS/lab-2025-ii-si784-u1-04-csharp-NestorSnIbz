@@ -1,8 +1,8 @@
 name: Construcción y despliegue de una aplicación MVC a Azure
 
 env:
-  AZURE_WEBAPP_NAME: upt-awa-320  # Aquí va el nombre de su aplicación
-  DOTNET_VERSION: '8'             # La versión de .NET
+  AZURE_WEBAPP_NAME: upt-awa-320  # Aquí va el nombre de tu aplicación
+  DOTNET_VERSION: '8'             # Versión de .NET
 
 on:
   push:
@@ -22,14 +22,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
+      - name: 'Login to GitHub Container Registry'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: nestorsnibz   # usuario en minúsculas
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: nestorsnibz        # tu usuario en minúsculas
+          password: ${{ secrets.GHTOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: 'Build and Push Docker Image'
         run: |
           docker build . --tag ghcr.io/nestorsnibz/shorten:${{ github.sha }}
           docker push ghcr.io/nestorsnibz/shorten:${{ github.sha }}
