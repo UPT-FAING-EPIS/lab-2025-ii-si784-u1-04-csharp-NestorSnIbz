@@ -29,12 +29,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_TOKEN }}
 
-
-      - name: Build and Push Docker Image
+      - name: Build Docker Image
         run: |
           USER_LOWER=$(echo "${GITHUB_ACTOR}" | tr '[:upper:]' '[:lower:]')
           docker build . --tag ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
+
+      # ✅ Nuevo paso de análisis con SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=${{ github.repository }}
+            -Dsonar.organization=tu_org_sonar
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Push Docker Image
+        run: |
+          USER_LOWER=$(echo "${GITHUB_ACTOR}" | tr '[:upper:]' '[:lower:]')
           docker push ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
+
 
 
   deploy:
@@ -54,3 +68,4 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ghcr.io/${{ github.actor }}/shorten:${{ github.sha }}
+  
