@@ -34,20 +34,18 @@ jobs:
           USER_LOWER=$(echo "${GITHUB_ACTOR}" | tr '[:upper:]' '[:lower:]')
           docker build . --tag ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
 
-      # ✅ Nuevo paso de análisis con SonarCloud
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
             -Dsonar.projectKey=${{ github.repository }}
-            -Dsonar.organization=tu_org_sonar
+            -Dsonar.organization=nestor123
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # Token automático de GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}     # Token de SonarCloud
 
-      - name: Push Docker Image
-        run: |
-          USER_LOWER=$(echo "${GITHUB_ACTOR}" | tr '[:upper:]' '[:lower:]')
-          docker push ghcr.io/$USER_LOWER/shorten:${GITHUB_SHA}
 
 
 
