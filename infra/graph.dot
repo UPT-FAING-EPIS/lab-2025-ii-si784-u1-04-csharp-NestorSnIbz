@@ -1,0 +1,17 @@
+digraph G {
+  rankdir = "RL";
+  node [shape = rect, fontname = "sans-serif"];
+  "azurerm_linux_web_app.webapp" [label="azurerm_linux_web_app.webapp"];
+  "azurerm_mssql_database.sqldb" [label="azurerm_mssql_database.sqldb"];
+  "azurerm_mssql_firewall_rule.sqlaccessrule" [label="azurerm_mssql_firewall_rule.sqlaccessrule"];
+  "azurerm_mssql_server.sqlsrv" [label="azurerm_mssql_server.sqlsrv"];
+  "azurerm_resource_group.rg" [label="azurerm_resource_group.rg"];
+  "azurerm_service_plan.appserviceplan" [label="azurerm_service_plan.appserviceplan"];
+  "random_integer.ri" [label="random_integer.ri"];
+  "azurerm_linux_web_app.webapp" -> "azurerm_service_plan.appserviceplan";
+  "azurerm_mssql_database.sqldb" -> "azurerm_mssql_server.sqlsrv";
+  "azurerm_mssql_firewall_rule.sqlaccessrule" -> "azurerm_mssql_server.sqlsrv";
+  "azurerm_mssql_server.sqlsrv" -> "azurerm_resource_group.rg";
+  "azurerm_resource_group.rg" -> "random_integer.ri";
+  "azurerm_service_plan.appserviceplan" -> "azurerm_resource_group.rg";
+}
